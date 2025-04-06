@@ -1,5 +1,6 @@
 import React from "react";
 import { Task } from '@/app/lib/definitions'
+import { DateDisplay } from "@/app/ui/date";
 
 const statusColors: Record<string, string> = {
   todo: "bg-yellow-100 border-yellow-400",
@@ -16,7 +17,7 @@ export const TaskCard = ({ task }: { task: Task }) => {
     >
       <h3 className="text-gray-700 text-lg">{task.title}</h3>
       <p className="text-sm text-gray-700">{task.description}</p>
-      <p className="text-xs text-gray-500 mt-2">Due: {new Date(task.due_date).toLocaleDateString()}</p>
+      <p className="text-xs text-gray-500 mt-2">Due: <DateDisplay date={task.due_date} /> </p>
     </div>
   );
 };

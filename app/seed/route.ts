@@ -4,11 +4,11 @@ import { users, projects, tasks } from '../lib/placeholder-data';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
-async function dropTables() {
-    await sql`DROP TABLE IF EXISTS tasks CASCADE;`;
-    await sql`DROP TABLE IF EXISTS projects CASCADE;`;
-    await sql`DROP TABLE IF EXISTS users CASCADE;`;
-}
+// async function dropTables() {
+//     await sql`DROP TABLE IF EXISTS tasks CASCADE;`;
+//     await sql`DROP TABLE IF EXISTS projects CASCADE;`;
+//     await sql`DROP TABLE IF EXISTS users CASCADE;`;
+// }
 
 async function seedUsers() {
     await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;

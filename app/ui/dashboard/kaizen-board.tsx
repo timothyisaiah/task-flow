@@ -3,10 +3,11 @@
 import React, { useState } from "react";
 import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import { TaskColumn } from "./taskcolumn";
+import { Task } from "@/app/lib/definitions";
 
 const statuses = ["todo", "in-progress", "done"];
 
-export function KaizenBoard({ tasks: initialTasks }: { tasks: any[] }) {
+export function KaizenBoard({ tasks: initialTasks }: { tasks: Task[] }) {
   const [tasks, setTasks] = useState(initialTasks);
 
   const onDragEnd = async (result: DropResult) => {
@@ -14,13 +15,13 @@ export function KaizenBoard({ tasks: initialTasks }: { tasks: any[] }) {
     if (!destination || source.droppableId === destination.droppableId) return;
 
     const updatedTasks = tasks.map(task =>
-      task.id === draggableId ? { ...task, status: destination.droppableId } : task
+      task.id === draggableId ? { ...task, status: destination.droppableId as "todo" | "in-progress" | "done" } : task
     );
 
     setTasks(updatedTasks);
 
     try {
-      await fetch(`/api/tasks/${draggableId}`, {
+      await fetch(`/tasks/${draggableId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: destination.droppableId }),
