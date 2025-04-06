@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { NextApiRequest } from "next";
+import postgres from "postgres";
 
-// Params are passed through a separate `context` object
+const sql = postgres(process.env.POSTGRES_URL!, {
+  ssl: "require",
+});
+
 export async function PATCH(req: NextRequest, context: { params: { id: string } }) {
   const { id } = context.params;
 
