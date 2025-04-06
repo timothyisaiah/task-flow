@@ -2,17 +2,26 @@ import { NextRequest, NextResponse } from "next/server";
 import postgres from "postgres";
 
 const sql = postgres(process.env.POSTGRES_URL!, {
-    ssl: "require",
+  ssl: "require",
 });
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
-  const { status } = await req.json();
   const { id } = params;
 
   try {
-    const result = await sql`UPDATE tasks SET status = ${status} WHERE id = ${id} RETURNING *`
+    const { status } = await req.json();
 
-    if (!result) {
+    if (!status || !id) {
+      return NextResponse.json({ message: "Missing status or id" }, { status: 400 });
+    }
+
+    const result = await sql`
+      UPDATE tasks 
+      SET status = ${status} 
+      WHERE id = ${id} 
+      RETURNING *`;
+
+    if (result.length === 0) {
       return NextResponse.json({ message: "Task not found" }, { status: 404 });
     }
 

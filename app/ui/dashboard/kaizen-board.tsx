@@ -21,7 +21,7 @@ export function KaizenBoard({ tasks: initialTasks }: { tasks: Task[] }) {
     setTasks(updatedTasks);
 
     try {
-      await fetch(`/tasks/${draggableId}`, {
+      await fetch(`/dashboard/tasks/${draggableId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: destination.droppableId }),
