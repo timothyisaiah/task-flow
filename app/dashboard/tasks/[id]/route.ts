@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import postgres from "postgres";
+import type { NextApiRequest } from "next";
 
-const sql = postgres(process.env.POSTGRES_URL!, {
-  ssl: "require",
-});
-
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params;
+// Params are passed through a separate `context` object
+export async function PATCH(req: NextRequest, context: { params: { id: string } }) {
+  const { id } = context.params;
 
   try {
     const { status } = await req.json();
