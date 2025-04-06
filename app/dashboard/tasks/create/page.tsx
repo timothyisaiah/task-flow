@@ -1,11 +1,11 @@
 import Breadcrumbs from "@/app/ui/breadcrumbs";
-// import Form from "@/app/ui/tasks/create-form";
-// import { fetchProjects } from "@/app/lib/data";
+import Form from "@/app/ui/tasks/create-form";
+import { fetchProjects } from "@/app/lib/data";
 
 
 export default async function Page() {
 
-//   const projects = await fetchProjects();
+  const projects = await fetchProjects();
 
   return (
     <main>
@@ -19,7 +19,7 @@ export default async function Page() {
         },
      ]}
     /> 
-    {/* <Form projects={projects}/>        */}
+    <Form projects={projects}/>       
     </main>
   );
 } 

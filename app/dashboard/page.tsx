@@ -1,10 +1,14 @@
-export default function Page() {
+import React from "react";
+import { fetchTasks } from "@/app/lib/data";
+import { KaizenBoard } from "@/app/ui/dashboard/kaizen-board";
+
+export default async function Dashboard() {
+  const tasks = await fetchTasks();
+
   return (
-    <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
-      <div className="w-full flex-none md:w-64">
-        <h1>Dashboard</h1>
-      </div>
-      <div className="flex-1 overflow-y-auto">Dashboard content goes here</div>
+    <div className="p-8">
+      <h1 className="text-3xl font-bold mb-6">Kaizen Board</h1>
+      <KaizenBoard tasks={tasks} />
     </div>
   );
 }

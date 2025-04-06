@@ -4,6 +4,12 @@ import { users, projects, tasks } from '../lib/placeholder-data';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
+async function dropTables() {
+    await sql`DROP TABLE IF EXISTS tasks CASCADE;`;
+    await sql`DROP TABLE IF EXISTS projects CASCADE;`;
+    await sql`DROP TABLE IF EXISTS users CASCADE;`;
+}
+
 async function seedUsers() {
     await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
     await sql`
@@ -33,7 +39,7 @@ async function seedProjects() {
     await sql`
     CREATE TABLE IF NOT EXISTS projects (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
+      title VARCHAR(255) NOT NULL,
       description TEXT,
       user_id UUID REFERENCES users(id) ON DELETE CASCADE
     );
@@ -42,7 +48,7 @@ async function seedProjects() {
     const insertedProjects = await Promise.all(
         projects.map(async (project) => {
             return sql`
-              INSERT INTO projects (id, name, description, user_id)
+              INSERT INTO projects (id, title, description, user_id)
               VALUES (${project.id}, ${project.title}, ${project.description}, ${project.user_id})
               ON CONFLICT (id) DO NOTHING;
             `;
@@ -81,6 +87,7 @@ async function seedTasks() {
 export async function GET(){
     try {
         const result = await sql.begin(() => [
+            // dropTables(),
             seedUsers(),
             seedProjects(),
             seedTasks(),

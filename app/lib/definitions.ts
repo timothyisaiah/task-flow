@@ -6,8 +6,9 @@ export type Task = {
   title: string;
   description: string;
   status: 'todo' | 'in-progress' | 'done';
-  dueDate: string;
+  due_date: string;
   project_id: string;
+  project_title:string;
 };
 
 export type Project = {
