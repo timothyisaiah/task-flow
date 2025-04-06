@@ -102,8 +102,8 @@ export async function fetchTaskById(id: string) {
           tasks.title, 
           tasks.description,
           tasks.status,
-          tasks.dueDate,
-          tasks.project_id,
+          tasks.due_date,
+          tasks.project_id
         FROM tasks
         WHERE tasks.id = ${id};
       `;
@@ -111,7 +111,7 @@ export async function fetchTaskById(id: string) {
         return data[0]
     } catch (error) {
         console.error('Database Error:', error);
-        throw new Error('Failed to fetch invoice.');
+        throw new Error('Failed to fetch task.');
     }
 }
 
@@ -122,7 +122,7 @@ export async function fetchProjectById(id: string) {
           projects.id,
           projects.title, 
           projects.description,
-          projects.user_id,
+          projects.user_id
         FROM projects
         WHERE projects.id = ${id};
       `;
@@ -130,7 +130,7 @@ export async function fetchProjectById(id: string) {
         return data[0]
     } catch (error) {
         console.error('Database Error:', error);
-        throw new Error('Failed to fetch invoice.');
+        throw new Error('Failed to fetch project.');
     }
 }
 

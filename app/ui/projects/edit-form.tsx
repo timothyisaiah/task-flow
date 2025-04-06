@@ -1,19 +1,32 @@
-"use client"
+"use client";
+
 import { ProjectForm, UserField } from "@/app/lib/definitions";
 import { updateProject } from "@/app/lib/actions";
 import { Button } from "@/app/ui/button";
 import Link from "next/link";
 
+export default function EditProjectForm({
+  project,
+  users,
+}: {
+  project: ProjectForm;
+  users: UserField[];
+}) {
+  const updateProjectWithId = updateProject.bind(null, project.id);
 
-
-export default function EditProjectForm({project, users, }:{project: ProjectForm; users: UserField[]; }){
-const updateProjectWithId = updateProject.bind(null, project.id);
-
-return (
-    <form action={updateProjectWithId} className="space-y-4">
+  return (
+    <div className="px-4 py-8 sm:px-6">
+    <form
+      action={updateProjectWithId}
+      className="max-w-xl mx-auto p-6 bg-white dark:bg-gray-900 rounded-2xl shadow space-y-6"
+    >
       <input type="hidden" name="id" value={project.id} />
-      <div className="flex flex-col space-y-2">
-        <label htmlFor="title" className="text-gray-800 dark:text-gray-200">
+
+      <div>
+        <label
+          htmlFor="title"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
+        >
           Project Title
         </label>
         <input
@@ -21,12 +34,16 @@ return (
           name="title"
           id="title"
           defaultValue={project.title}
-          className="border rounded p-2 bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600"
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
         />
       </div>
-      <div className="flex flex-col space-y-2">
-        <label htmlFor="description" className="text-gray-800 dark:text-gray-200">
+
+      <div>
+        <label
+          htmlFor="description"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
+        >
           Description
         </label>
         <textarea
@@ -34,36 +51,49 @@ return (
           id="description"
           defaultValue={project.description}
           rows={4}
-          className="border rounded p-2 bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600"
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         ></textarea>
       </div>
+
       <div>
-      <select
-              id="userId"
-              name="userId"
-              className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-              defaultValue={project.user_id}
-            >
-              <option value="" disabled>
-                Select a user
-              </option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.name}
-                </option>
-              ))}
-            </select>
+        <label
+          htmlFor="userId"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1"
+        >
+          Assign to User
+        </label>
+        <select
+          id="userId"
+          name="userId"
+          defaultValue={project.user_id}
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="" disabled>
+            Select a user
+          </option>
+          {users.map((user) => (
+            <option key={user.id} value={user.id}>
+              {user.name}
+            </option>
+          ))}
+        </select>
       </div>
-      <div>
-        <Link 
+
+      <div className="flex justify-end space-x-4 pt-4">
+        <Link
           href="/dashboard/projects"
-          className="mr-4 text-gray-500 dark:text-gray-400">
-        Cancel</Link>
-        <Button type="submit" className="ml-4 bg-blue-500 text-white rounded-md p-2">
+          className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-gray-500 dark:text-gray-400 hover:underline"
+        >
+          Cancel
+        </Link>
+        <Button
+          type="submit"
+          className="inline-flex items-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
           Update Project
         </Button>
       </div>
     </form>
-)
-    
+    </div>
+  );
 }
