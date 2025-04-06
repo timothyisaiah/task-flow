@@ -7,12 +7,13 @@ import { GeistSans } from "@/app/ui/fonts";
 // import ProjectsTable from "@/app/ui/projects/table";
 // import { ProjectsTableSkeleton } from "@/app/ui/skeletons";
 
-export default async function Page(props:{
-    searchParams?:Promise<{
-        query?: string;
-        page?: string;
-    }>
-}) {
+// export default async function Page(props:{
+//     searchParams?:Promise<{
+//         query?: string;
+//         page?: string;
+//     }>
+// }) {
+export default async function Page() {
     // const searchParams = await props.searchParams;
     // const query = searchParams?.query || '';
     // const currentPage = Number(searchParams?.page) || 1;
