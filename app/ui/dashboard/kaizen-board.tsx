@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
+import { DragDropContext, Droppable, DropResult } from "@hello-pangea/dnd";
 import { TaskColumn } from "./taskcolumn";
 
 const statuses = ["todo", "in-progress", "done"];
