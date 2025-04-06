@@ -1,5 +1,5 @@
 'use client';
-import Image from "next/image";
+
 import { useRouter } from "next/navigation";
 import { GeistSans, GeistMono } from "@/app/ui/fonts";
 import { ArrowRightEndOnRectangleIcon } from "@heroicons/react/24/outline";
