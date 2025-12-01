@@ -38,10 +38,11 @@ jobs:
 
       - name: Build
         run: pnpm build
-        env:
-          # Add your environment variables here if needed for build
-          # POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
-          # DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        # Note: For static export, environment variables are not used
+        # If you need env vars, uncomment and add them:
+        # env:
+        #   POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
+        #   DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -52,11 +53,11 @@ jobs:
           path: ./out
 
   deploy:
+    runs-on: ubuntu-latest
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
