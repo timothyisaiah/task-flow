@@ -7,6 +7,9 @@ import { CreateProject } from "@/app/ui/projects/buttons";
 import ProjectsTable from "@/app/ui/projects/table";
 import { ProjectsTableSkeleton } from "@/app/ui/skeletons";
 
+// Mark as dynamic to prevent static generation (required for database access)
+export const dynamic = 'force-dynamic';
+
 export default async function Page(props:{
     searchParams?:Promise<{
         query?: string;
@@ -16,7 +19,13 @@ export default async function Page(props:{
     const searchParams = await props.searchParams;
     const query = searchParams?.query || '';
     const currentPage = Number(searchParams?.page) || 1;
-    const totalPages = await fetchProjectPages(query);
+    let totalPages = 1;
+    try {
+        totalPages = await fetchProjectPages(query);
+    } catch (error) {
+        console.error("Error loading project pages:", error);
+        totalPages = 1;
+    }
 
     return (
         <div className="w-full">

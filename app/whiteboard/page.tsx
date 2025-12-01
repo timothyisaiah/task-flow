@@ -4,6 +4,9 @@ import { WhiteboardCanvas } from "@/app/ui/whiteboard/whiteboard-canvas";
 import ThemeToggle from "@/app/ui/toggletheme";
 import { StickyNote } from "@/app/lib/definitions";
 
+// Mark as dynamic to prevent static generation (required for database access)
+export const dynamic = 'force-dynamic';
+
 export default async function WhiteboardPage() {
   let notes: StickyNote[] = [];
   try {

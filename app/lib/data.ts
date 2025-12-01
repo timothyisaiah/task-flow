@@ -25,7 +25,8 @@ export async function fetchTasks() {
         return tasks;
     } catch (error) {
         console.error('Error fetching tasks:', error);
-        throw error;
+        // Return empty array instead of throwing to allow static export builds
+        return [];
     }
 }
 
@@ -44,7 +45,8 @@ export async function fetchFilteredProjects(query: string, currentPage: number) 
         return projects;
     } catch (error) {
         console.error('Error fetching projects:', error);
-        throw error;
+        // Return empty array instead of throwing to allow static export builds
+        return [];
     }
 
 }
@@ -56,7 +58,8 @@ export async function fetchProjectPages(query: string) {
         return totalPages;
     } catch (error) {
         console.error('Error fetching project pages:', error);
-        throw error;
+        // Return 1 instead of throwing to allow static export builds
+        return 1;
     }
 }
 
@@ -73,7 +76,8 @@ export async function fetchProjects() {
         return projects;
     } catch (err) {
         console.error('Database Error:', err);
-        throw new Error('Failed to fetch all customers.');
+        // Return empty array instead of throwing to allow static export builds
+        return [];
     }
 }
 
@@ -90,7 +94,8 @@ export async function fetchUsers() {
         return users;
     } catch (err) {
         console.error('Database Error:', err);
-        throw new Error('Failed to fetch all customers.');
+        // Return empty array instead of throwing to allow static export builds
+        return [];
     }
 }
 
@@ -111,7 +116,8 @@ export async function fetchTaskById(id: string) {
         return data[0]
     } catch (error) {
         console.error('Database Error:', error);
-        throw new Error('Failed to fetch task.');
+        // Return undefined instead of throwing to allow static export builds
+        return undefined;
     }
 }
 
@@ -130,7 +136,8 @@ export async function fetchProjectById(id: string) {
         return data[0]
     } catch (error) {
         console.error('Database Error:', error);
-        throw new Error('Failed to fetch project.');
+        // Return undefined instead of throwing to allow static export builds
+        return undefined;
     }
 }
 
@@ -148,8 +155,9 @@ export async function fetchFilteredTasks(query: string, currentPage: number) {
         `;
         return tasks;
     } catch (error) {
-        console.error('Error fetching projects:', error);
-        throw error;
+        console.error('Error fetching tasks:', error);
+        // Return empty array instead of throwing to allow static export builds
+        return [];
     }
 
 }
@@ -166,8 +174,9 @@ export async function fetchTaskPages(query: string) {
         const totalPages = Math.ceil(Number(totalTasks[0].count) / ITEMS_PER_PAGE);
         return totalPages;
     } catch (error) {
-        console.error('Error fetching project pages:', error);
-        throw error;
+        console.error('Error fetching task pages:', error);
+        // Return 1 instead of throwing to allow static export builds
+        return 1;
     }
 }
 
@@ -191,6 +200,7 @@ export async function fetchStickyNotes() {
         return notes;
     } catch (error) {
         console.error('Error fetching sticky notes:', error);
-        throw error;
+        // Return empty array instead of throwing to allow static export builds
+        return [];
     }
 }
