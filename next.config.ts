@@ -1,7 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: 'export',
+  images: {
+    unoptimized: true,
+  },
+  // If deploying to a subdirectory, uncomment and set your repo name:
+  // basePath: '/task-flow',
+  // assetPrefix: '/task-flow',
 };
 
 export default nextConfig;
