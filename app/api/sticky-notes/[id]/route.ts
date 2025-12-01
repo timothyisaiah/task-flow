@@ -21,9 +21,13 @@ export async function PATCH(
       );
     }
 
+    // Ensure values are numbers (handles both integer and decimal)
+    const posX = Number(position_x);
+    const posY = Number(position_y);
+
     const result = await sql`
       UPDATE sticky_notes 
-      SET position_x = ${position_x}, position_y = ${position_y}, updated_at = NOW()
+      SET position_x = ${posX}, position_y = ${posY}, updated_at = NOW()
       WHERE id = ${id} 
       RETURNING *
     `;

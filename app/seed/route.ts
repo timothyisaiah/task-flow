@@ -91,14 +91,38 @@ async function seedStickyNotes() {
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
       content TEXT NOT NULL,
       color VARCHAR(20) NOT NULL,
-      position_x INTEGER NOT NULL DEFAULT 0,
-      position_y INTEGER NOT NULL DEFAULT 0,
-      width INTEGER DEFAULT 200,
-      height INTEGER DEFAULT 200,
+      position_x NUMERIC(10, 2) NOT NULL DEFAULT 0,
+      position_y NUMERIC(10, 2) NOT NULL DEFAULT 0,
+      width NUMERIC(10, 2) DEFAULT 200,
+      height NUMERIC(10, 2) DEFAULT 200,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
     );
   `;
+  
+    // Migrate existing INTEGER columns to NUMERIC if table exists
+    try {
+      await sql`
+        DO $$
+        BEGIN
+          IF EXISTS (
+            SELECT 1 FROM information_schema.columns 
+            WHERE table_name = 'sticky_notes' 
+            AND column_name = 'position_x' 
+            AND data_type = 'integer'
+          ) THEN
+            ALTER TABLE sticky_notes 
+            ALTER COLUMN position_x TYPE NUMERIC(10, 2) USING position_x::NUMERIC(10, 2),
+            ALTER COLUMN position_y TYPE NUMERIC(10, 2) USING position_y::NUMERIC(10, 2),
+            ALTER COLUMN width TYPE NUMERIC(10, 2) USING width::NUMERIC(10, 2),
+            ALTER COLUMN height TYPE NUMERIC(10, 2) USING height::NUMERIC(10, 2);
+          END IF;
+        END $$;
+      `;
+    } catch (error) {
+      // Migration might fail if columns are already NUMERIC, ignore
+      console.log('Migration note:', error);
+    }
 
     return true;
 }

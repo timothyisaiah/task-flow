@@ -14,12 +14,47 @@ interface WhiteboardCanvasProps {
 export function WhiteboardCanvas({ initialNotes }: WhiteboardCanvasProps) {
   const [notes, setNotes] = useState<StickyNote[]>(initialNotes);
   const [selectedColor, setSelectedColor] = useState<StickyNote["color"]>("yellow");
+  const [canvasSize, setCanvasSize] = useState({ width: "100vw", height: "100vh" });
   const router = useRouter();
 
   // Sync notes when initialNotes change (from router.refresh)
   useEffect(() => {
     setNotes(initialNotes);
   }, [initialNotes]);
+
+  // Calculate canvas size based on note positions
+  useEffect(() => {
+    const calculateSize = () => {
+      if (notes.length === 0) {
+        setCanvasSize({ width: "100vw", height: "100vh" });
+        return;
+      }
+
+      const padding = 2000; // Extra padding around notes
+      let minX = 0, minY = 0, maxX = 0, maxY = 0;
+
+      notes.forEach((note) => {
+        const noteRight = note.position_x + note.width;
+        const noteBottom = note.position_y + note.height;
+        
+        minX = Math.min(minX, note.position_x);
+        minY = Math.min(minY, note.position_y);
+        maxX = Math.max(maxX, noteRight);
+        maxY = Math.max(maxY, noteBottom);
+      });
+
+      const width = Math.max(window.innerWidth, maxX - minX + padding * 2);
+      const height = Math.max(window.innerHeight, maxY - minY + padding * 2);
+
+      setCanvasSize({ width: `${width}px`, height: `${height}px` });
+    };
+
+    calculateSize();
+    
+    // Recalculate on window resize
+    window.addEventListener("resize", calculateSize);
+    return () => window.removeEventListener("resize", calculateSize);
+  }, [notes]);
 
   // Refresh notes periodically to get updates from other users
   useEffect(() => {
@@ -64,7 +99,7 @@ export function WhiteboardCanvas({ initialNotes }: WhiteboardCanvasProps) {
   };
 
   return (
-    <div className="relative w-full min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="relative w-full min-h-screen bg-gray-50 dark:bg-gray-900 overflow-auto">
       {/* Toolbar */}
       <Toolbar
         selectedColor={selectedColor}
@@ -76,6 +111,8 @@ export function WhiteboardCanvas({ initialNotes }: WhiteboardCanvasProps) {
       <div
         className="relative"
         style={{
+          width: canvasSize.width,
+          height: canvasSize.height,
           minWidth: "100vw",
           minHeight: "100vh",
           backgroundImage: `
@@ -83,6 +120,7 @@ export function WhiteboardCanvas({ initialNotes }: WhiteboardCanvasProps) {
             linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)
           `,
           backgroundSize: "50px 50px",
+          backgroundPosition: "0 0",
         }}
       >
         {notes.map((note) => (

@@ -81,7 +81,7 @@ export function StickyNoteComponent({ note, onColorChange, onDelete }: StickyNot
     500
   );
 
-  // Handle drag start
+  // Handle drag start (mouse)
   const handleMouseDown = (e: React.MouseEvent) => {
     // Don't start drag if clicking on buttons or textarea
     if (
@@ -104,27 +104,69 @@ export function StickyNoteComponent({ note, onColorChange, onDelete }: StickyNot
     e.preventDefault();
   };
 
-  // Handle drag
+  // Handle drag start (touch)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    // Don't start drag if clicking on buttons or textarea
+    if (
+      (e.target as HTMLElement).closest("button") ||
+      (e.target as HTMLElement).tagName === "TEXTAREA" ||
+      isEditing
+    ) {
+      return;
+    }
+
+    const touch = e.touches[0];
+    setIsDragging(true);
+    const rect = noteRef.current?.getBoundingClientRect();
+    if (rect && touch) {
+      // Calculate offset from touch position to note's current position
+      setDragOffset({
+        x: touch.clientX - position.x,
+        y: touch.clientY - position.y,
+      });
+    }
+    e.preventDefault();
+  };
+
+  // Handle drag (mouse and touch)
   useEffect(() => {
     if (!isDragging) return;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const newX = e.clientX - dragOffset.x;
-      const newY = e.clientY - dragOffset.y;
+    const handleMove = (clientX: number, clientY: number) => {
+      const newX = clientX - dragOffset.x;
+      const newY = clientY - dragOffset.y;
       setPosition({ x: newX, y: newY });
       debouncedPositionUpdate(newX, newY);
     };
 
-    const handleMouseUp = () => {
+    const handleMouseMove = (e: MouseEvent) => {
+      handleMove(e.clientX, e.clientY);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        handleMove(touch.clientX, touch.clientY);
+        e.preventDefault(); // Prevent scrolling while dragging
+      }
+    };
+
+    const handleEnd = () => {
       setIsDragging(false);
     };
 
     document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("mouseup", handleEnd);
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
+    document.addEventListener("touchend", handleEnd);
+    document.addEventListener("touchcancel", handleEnd);
 
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("mouseup", handleEnd);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleEnd);
+      document.removeEventListener("touchcancel", handleEnd);
     };
   }, [isDragging, dragOffset, debouncedPositionUpdate]);
 
@@ -167,6 +209,7 @@ export function StickyNoteComponent({ note, onColorChange, onDelete }: StickyNot
         minHeight: `${note.height}px`,
       }}
       onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

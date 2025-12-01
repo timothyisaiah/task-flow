@@ -173,15 +173,16 @@ export async function fetchTaskPages(query: string) {
 
 export async function fetchStickyNotes() {
     try {
+        // Explicitly cast numeric columns to ensure type consistency after migration
         const notes = await sql<StickyNote[]>`
             SELECT 
                 id,
                 content,
                 color,
-                position_x,
-                position_y,
-                width,
-                height,
+                position_x::NUMERIC as position_x,
+                position_y::NUMERIC as position_y,
+                width::NUMERIC as width,
+                height::NUMERIC as height,
                 created_at,
                 updated_at
             FROM sticky_notes
