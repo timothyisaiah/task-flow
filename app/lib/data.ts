@@ -1,13 +1,13 @@
 // Fetch data from the API
 
 import postgres from 'postgres';
-import { ProjectField, ProjectForm, ProjectTable, Task, TaskForm, TasksTable, UserField } from '@/app/lib/definitions';
+import { ProjectField, ProjectForm, ProjectTable, Task, TaskForm, TasksTable, UserField, StickyNote } from '@/app/lib/definitions';
 
 
 
 
 
-const sql = postgres(process.env.DATABASE_URL!, { ssl: 'require' });
+const sql = postgres(process.env.DATABASE_URL || process.env.POSTGRES_URL!, { ssl: 'require' });
 
 
 export async function fetchTasks() {
@@ -167,6 +167,29 @@ export async function fetchTaskPages(query: string) {
         return totalPages;
     } catch (error) {
         console.error('Error fetching project pages:', error);
+        throw error;
+    }
+}
+
+export async function fetchStickyNotes() {
+    try {
+        const notes = await sql<StickyNote[]>`
+            SELECT 
+                id,
+                content,
+                color,
+                position_x,
+                position_y,
+                width,
+                height,
+                created_at,
+                updated_at
+            FROM sticky_notes
+            ORDER BY created_at ASC
+        `;
+        return notes;
+    } catch (error) {
+        console.error('Error fetching sticky notes:', error);
         throw error;
     }
 }

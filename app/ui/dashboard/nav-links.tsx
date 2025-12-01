@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import { HomeIcon, FolderIcon, CheckCircleIcon, CogIcon, UserIcon } from "@heroicons/react/24/outline";
+import { HomeIcon, FolderIcon, CheckCircleIcon, CogIcon, UserIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 
 const links = [
   {
@@ -21,6 +21,11 @@ const links = [
     name: "Tasks",
     href: "/dashboard/tasks",
     icon: CheckCircleIcon,
+  },
+  {
+    name: "Whiteboard",
+    href: "/whiteboard",
+    icon: RectangleStackIcon,
   },
   {
     name: "Settings",

@@ -67,3 +67,25 @@ export type ProjectTable = {
     description: string;
     user_name: string;
 }
+
+export type StickyNote = {
+    id: string;
+    content: string;
+    color: 'yellow' | 'pink' | 'blue' | 'green' | 'orange' | 'purple';
+    position_x: number;
+    position_y: number;
+    width: number;
+    height: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export type StickyNoteForm = {
+    id: string;
+    content: string;
+    color: 'yellow' | 'pink' | 'blue' | 'green' | 'orange' | 'purple';
+    position_x: number;
+    position_y: number;
+    width: number;
+    height: number;
+}

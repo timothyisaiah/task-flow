@@ -1,8 +1,9 @@
 'use client';
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { GeistSans, GeistMono } from "@/app/ui/fonts";
-import { ArrowRightEndOnRectangleIcon } from "@heroicons/react/24/outline";
+import { ArrowRightEndOnRectangleIcon, RectangleStackIcon } from "@heroicons/react/24/outline";
 import ThemeToggle from "@/app/ui/toggletheme";
 
 export default function Home() {
@@ -26,13 +27,23 @@ export default function Home() {
         Effortlessly manage your projects and tasks in one place.
       </p>
 
-      <button
-        onClick={handleLoginClick}
-        className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-      >
-        <ArrowRightEndOnRectangleIcon className="w-5 h-5" />
-        <span>Login</span>
-      </button>
+      <div className="flex flex-col sm:flex-row gap-4">
+        <button
+          onClick={handleLoginClick}
+          className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+        >
+          <ArrowRightEndOnRectangleIcon className="w-5 h-5" />
+          <span>Login</span>
+        </button>
+        
+        <Link
+          href="/whiteboard"
+          className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+        >
+          <RectangleStackIcon className="w-5 h-5" />
+          <span>Whiteboard</span>
+        </Link>
+      </div>
     </main>
   );
 }

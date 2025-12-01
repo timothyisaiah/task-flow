@@ -83,6 +83,26 @@ async function seedTasks() {
     return insertedTasks;
 }
 
+async function seedStickyNotes() {
+    await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
+    await sql`
+    CREATE TABLE IF NOT EXISTS sticky_notes (
+      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      content TEXT NOT NULL,
+      color VARCHAR(20) NOT NULL,
+      position_x INTEGER NOT NULL DEFAULT 0,
+      position_y INTEGER NOT NULL DEFAULT 0,
+      width INTEGER DEFAULT 200,
+      height INTEGER DEFAULT 200,
+      created_at TIMESTAMP DEFAULT NOW(),
+      updated_at TIMESTAMP DEFAULT NOW()
+    );
+  `;
+
+    return true;
+}
+
 
 export async function GET(){
     try {
@@ -91,6 +111,7 @@ export async function GET(){
             seedUsers(),
             seedProjects(),
             seedTasks(),
+            seedStickyNotes(),
         ]);
 
         return Response.json({ message: 'Database seeded successfully', result: result });

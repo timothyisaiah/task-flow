@@ -167,5 +167,74 @@ export async function authenticate(
     }
   }
 
+const StickyNoteSchema = z.object({
+    id: z.string(),
+    content: z.string(),
+    color: z.enum(['yellow', 'pink', 'blue', 'green', 'orange', 'purple']),
+    position_x: z.number(),
+    position_y: z.number(),
+    width: z.number().default(200),
+    height: z.number().default(200),
+});
+
+const CreateStickyNote = StickyNoteSchema.omit({ id: true });
+
+export async function createStickyNote(formData: FormData) {
+    const { content, color, position_x, position_y, width, height } = CreateStickyNote.parse({
+        content: formData.get("content")?.toString() || '',
+        color: formData.get("color")?.toString() as 'yellow' | 'pink' | 'blue' | 'green' | 'orange' | 'purple' || 'yellow',
+        position_x: Number(formData.get("position_x")) || 0,
+        position_y: Number(formData.get("position_y")) || 0,
+        width: Number(formData.get("width")) || 200,
+        height: Number(formData.get("height")) || 200,
+    });
+
+    try {
+        await sql`
+            INSERT INTO sticky_notes (content, color, position_x, position_y, width, height)
+            VALUES (${content}, ${color}, ${position_x}, ${position_y}, ${width}, ${height})
+        `;
+    } catch (error) {
+        console.error("Database Error:", error);
+        throw error;
+    }
+
+    revalidatePath("/whiteboard");
+}
+
+export async function updateStickyNote(id: string, formData: FormData) {
+    const { content, color } = {
+        content: formData.get("content")?.toString() || '',
+        color: formData.get("color")?.toString() as 'yellow' | 'pink' | 'blue' | 'green' | 'orange' | 'purple' || 'yellow',
+    };
+
+    try {
+        await sql`
+            UPDATE sticky_notes
+            SET content = ${content}, color = ${color}, updated_at = NOW()
+            WHERE id = ${id}
+        `;
+    } catch (error) {
+        console.error("Database Error:", error);
+        throw error;
+    }
+
+    revalidatePath("/whiteboard");
+}
+
+export async function deleteStickyNote(id: string) {
+    try {
+        await sql`
+            DELETE FROM sticky_notes
+            WHERE id = ${id}
+        `;
+    } catch (error) {
+        console.error("Database Error:", error);
+        throw error;
+    }
+
+    revalidatePath("/whiteboard");
+}
+
 
 
