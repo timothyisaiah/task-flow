@@ -7,9 +7,9 @@ const sql = postgres(process.env.POSTGRES_URL!, {
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+  const { id } = await params;
 
   try {
     const { status } = await req.json();
