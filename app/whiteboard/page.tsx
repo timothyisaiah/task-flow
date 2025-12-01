@@ -2,9 +2,10 @@ import React from "react";
 import { fetchStickyNotes } from "@/app/lib/data";
 import { WhiteboardCanvas } from "@/app/ui/whiteboard/whiteboard-canvas";
 import ThemeToggle from "@/app/ui/toggletheme";
+import { StickyNote } from "@/app/lib/definitions";
 
 export default async function WhiteboardPage() {
-  let notes = [];
+  let notes: StickyNote[] = [];
   try {
     notes = await fetchStickyNotes();
   } catch (error) {

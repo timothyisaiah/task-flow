@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "build:static": "powershell -Command \"$env:BUILD_STATIC='true'; pnpm build\"",
     "start": "next start",
     "lint": "next lint",
     "export": "next build"

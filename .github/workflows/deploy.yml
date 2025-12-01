@@ -36,13 +36,43 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Temporarily move API routes for static export
+        run: |
+          mkdir -p _backup
+          if [ -d "app/api" ]; then
+            mv app/api _backup/api.bak
+            # Rename .ts files to .bak so TypeScript won't check them
+            find _backup/api.bak -name "*.ts" -exec sh -c 'mv "$1" "${1%.ts}.ts.bak"' _ {} \;
+            find _backup/api.bak -name "*.tsx" -exec sh -c 'mv "$1" "${1%.tsx}.tsx.bak"' _ {} \;
+          fi
+          if [ -d "app/seed" ]; then
+            mv app/seed _backup/seed.bak
+            # Rename .ts files to .bak so TypeScript won't check them
+            find _backup/seed.bak -name "*.ts" -exec sh -c 'mv "$1" "${1%.ts}.ts.bak"' _ {} \;
+            find _backup/seed.bak -name "*.tsx" -exec sh -c 'mv "$1" "${1%.tsx}.tsx.bak"' _ {} \;
+          fi
+
       - name: Build
-        run: pnpm build
-        # Note: For static export, environment variables are not used
-        # If you need env vars, uncomment and add them:
-        # env:
-        #   POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
-        #   DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: BUILD_STATIC=true pnpm build
+        env:
+          BUILD_STATIC: 'true'
+
+      - name: Restore API routes
+        if: always()
+        run: |
+          if [ -d "_backup/api.bak" ]; then
+            # Restore .ts and .tsx files from .bak
+            find _backup/api.bak -name "*.ts.bak" -exec sh -c 'mv "$1" "${1%.ts.bak}.ts"' _ {} \;
+            find _backup/api.bak -name "*.tsx.bak" -exec sh -c 'mv "$1" "${1%.tsx.bak}.tsx"' _ {} \;
+            mv _backup/api.bak app/api
+          fi
+          if [ -d "_backup/seed.bak" ]; then
+            # Restore .ts and .tsx files from .bak
+            find _backup/seed.bak -name "*.ts.bak" -exec sh -c 'mv "$1" "${1%.ts.bak}.ts"' _ {} \;
+            find _backup/seed.bak -name "*.tsx.bak" -exec sh -c 'mv "$1" "${1%.tsx.bak}.tsx"' _ {} \;
+            mv _backup/seed.bak app/seed
+          fi
+          rm -rf _backup
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
