@@ -66,25 +66,33 @@ export function WhiteboardCanvas({ initialNotes }: WhiteboardCanvasProps) {
   }, [router]);
 
   const handleAddNote = async () => {
-    // Get viewport center
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const scrollX = window.scrollX || window.pageXOffset;
-    const scrollY = window.scrollY || window.pageYOffset;
+    try {
+      // Get viewport center
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const scrollX = window.scrollX || window.pageXOffset;
+      const scrollY = window.scrollY || window.pageYOffset;
 
-    const centerX = scrollX + viewportWidth / 2 - 100; // Offset by half note width
-    const centerY = scrollY + viewportHeight / 2 - 100; // Offset by half note height
+      const centerX = scrollX + viewportWidth / 2 - 100; // Offset by half note width
+      const centerY = scrollY + viewportHeight / 2 - 100; // Offset by half note height
 
-    const formData = new FormData();
-    formData.append("content", "");
-    formData.append("color", selectedColor);
-    formData.append("position_x", centerX.toString());
-    formData.append("position_y", centerY.toString());
-    formData.append("width", "200");
-    formData.append("height", "200");
+      const formData = new FormData();
+      formData.append("content", "");
+      formData.append("color", selectedColor);
+      formData.append("position_x", centerX.toString());
+      formData.append("position_y", centerY.toString());
+      formData.append("width", "200");
+      formData.append("height", "200");
 
-    await createStickyNote(formData);
-    router.refresh();
+      const result = await createStickyNote(formData);
+      if (result?.success) {
+        router.refresh();
+      } else {
+        console.error("Failed to create sticky note:", result?.error);
+      }
+    } catch (error) {
+      console.error("Error creating sticky note:", error);
+    }
   };
 
   const handleColorChange = (id: string, color: StickyNote["color"]) => {

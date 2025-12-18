@@ -180,52 +180,54 @@ const StickyNoteSchema = z.object({
 const CreateStickyNote = StickyNoteSchema.omit({ id: true });
 
 export async function createStickyNote(formData: FormData) {
-    const { content, color, position_x, position_y, width, height } = CreateStickyNote.parse({
-        content: formData.get("content")?.toString() || '',
-        color: formData.get("color")?.toString() as 'yellow' | 'pink' | 'blue' | 'green' | 'orange' | 'purple' || 'yellow',
-        position_x: Number(formData.get("position_x")) || 0,
-        position_y: Number(formData.get("position_y")) || 0,
-        width: Number(formData.get("width")) || 200,
-        height: Number(formData.get("height")) || 200,
-    });
-
-    // Ensure values are numbers (handles both integer and decimal)
-    const posX = Number(position_x);
-    const posY = Number(position_y);
-    const w = Number(width);
-    const h = Number(height);
-
     try {
+        const { content, color, position_x, position_y, width, height } = CreateStickyNote.parse({
+            content: formData.get("content")?.toString() || '',
+            color: formData.get("color")?.toString() as 'yellow' | 'pink' | 'blue' | 'green' | 'orange' | 'purple' || 'yellow',
+            position_x: Number(formData.get("position_x")) || 0,
+            position_y: Number(formData.get("position_y")) || 0,
+            width: Number(formData.get("width")) || 200,
+            height: Number(formData.get("height")) || 200,
+        });
+
+        // Ensure values are numbers (handles both integer and decimal)
+        const posX = Number(position_x);
+        const posY = Number(position_y);
+        const w = Number(width);
+        const h = Number(height);
+
         await sql`
             INSERT INTO sticky_notes (content, color, position_x, position_y, width, height)
             VALUES (${content}, ${color}, ${posX}, ${posY}, ${w}, ${h})
         `;
+
+        revalidatePath("/whiteboard");
+        return { success: true };
     } catch (error) {
         console.error("Database Error:", error);
-        throw error;
+        return { success: false, error: error instanceof Error ? error.message : 'Failed to create sticky note' };
     }
-
-    revalidatePath("/whiteboard");
 }
 
 export async function updateStickyNote(id: string, formData: FormData) {
-    const { content, color } = {
-        content: formData.get("content")?.toString() || '',
-        color: formData.get("color")?.toString() as 'yellow' | 'pink' | 'blue' | 'green' | 'orange' | 'purple' || 'yellow',
-    };
-
     try {
+        const { content, color } = {
+            content: formData.get("content")?.toString() || '',
+            color: formData.get("color")?.toString() as 'yellow' | 'pink' | 'blue' | 'green' | 'orange' | 'purple' || 'yellow',
+        };
+
         await sql`
             UPDATE sticky_notes
             SET content = ${content}, color = ${color}, updated_at = NOW()
             WHERE id = ${id}
         `;
+
+        revalidatePath("/whiteboard");
+        return { success: true };
     } catch (error) {
         console.error("Database Error:", error);
-        throw error;
+        return { success: false, error: error instanceof Error ? error.message : 'Failed to update sticky note' };
     }
-
-    revalidatePath("/whiteboard");
 }
 
 export async function deleteStickyNote(id: string) {
@@ -234,12 +236,13 @@ export async function deleteStickyNote(id: string) {
             DELETE FROM sticky_notes
             WHERE id = ${id}
         `;
+
+        revalidatePath("/whiteboard");
+        return { success: true };
     } catch (error) {
         console.error("Database Error:", error);
-        throw error;
+        return { success: false, error: error instanceof Error ? error.message : 'Failed to delete sticky note' };
     }
-
-    revalidatePath("/whiteboard");
 }
 
 

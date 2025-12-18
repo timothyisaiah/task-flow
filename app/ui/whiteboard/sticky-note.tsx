@@ -172,25 +172,54 @@ export function StickyNoteComponent({ note, onColorChange, onDelete }: StickyNot
 
   const handleContentChange = async (newContent: string) => {
     setContent(newContent);
-    const formData = new FormData();
-    formData.append("content", newContent);
-    formData.append("color", note.color);
-    await updateStickyNote(note.id, formData);
+    try {
+      const formData = new FormData();
+      formData.append("content", newContent);
+      formData.append("color", note.color);
+      const result = await updateStickyNote(note.id, formData);
+      if (!result?.success) {
+        console.error("Failed to update sticky note:", result?.error);
+        // Revert content on error
+        setContent(note.content);
+      }
+    } catch (error) {
+      console.error("Error updating sticky note:", error);
+      // Revert content on error
+      setContent(note.content);
+    }
   };
 
   const handleColorSelect = async (color: StickyNote["color"]) => {
     setShowColorPicker(false);
-    const formData = new FormData();
-    formData.append("content", content);
-    formData.append("color", color);
-    await updateStickyNote(note.id, formData);
-    onColorChange(note.id, color);
+    try {
+      const formData = new FormData();
+      formData.append("content", content);
+      formData.append("color", color);
+      const result = await updateStickyNote(note.id, formData);
+      if (result?.success) {
+        onColorChange(note.id, color);
+      } else {
+        console.error("Failed to update sticky note color:", result?.error);
+      }
+    } catch (error) {
+      console.error("Error updating sticky note color:", error);
+    }
   };
 
   const handleDelete = async () => {
     if (confirm("Are you sure you want to delete this note?")) {
-      await deleteStickyNote(note.id);
-      onDelete(note.id);
+      try {
+        const result = await deleteStickyNote(note.id);
+        if (result?.success) {
+          onDelete(note.id);
+        } else {
+          console.error("Failed to delete sticky note:", result?.error);
+          alert("Failed to delete note. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error deleting sticky note:", error);
+        alert("Failed to delete note. Please try again.");
+      }
     }
   };
 
