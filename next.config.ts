@@ -1,15 +1,15 @@
 import type { NextConfig } from "next";
 
+const isStaticBuild = process.env.BUILD_STATIC === "true";
+
 const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  // Skip generating static pages for dynamic routes during export
-  ...(process.env.BUILD_STATIC === 'true' && {
-    output: 'export',
-    // Exclude dynamic routes from static generation
+  ...(isStaticBuild && {
+    output: "export",
     generateBuildId: async () => {
-      return 'static-build'
+      return "static-build";
     },
   }),
 };

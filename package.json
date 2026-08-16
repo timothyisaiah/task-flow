@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "node scripts/build.mjs",
     "build:static": "powershell -Command \"$env:BUILD_STATIC='true'; pnpm build\"",
     "start": "next start",
     "lint": "next lint",
